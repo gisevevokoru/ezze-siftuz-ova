@@ -20,9 +20,17 @@ data=$(
     }' \
     $specUri $api ${version^} $user $repository
 )
-zipFile="$api-$version.zip"
 mkdir -p "$directory"
-git clone "https://$user@github.com/$user/$repository.git" "$directory"
+pushd "$directory"
+zipFile="../$api-$version.zip"
+if [[ ! -d ".git" ]]; then
+    read -sp "Go to Github now and create the repository $user/$repository. Then press Enter."
+    git clone "https://$user@github.com/$user/$repository.git" ./ \
+    && git config user.name gisevevokoru \
+    && git config user.email g+isevevokoru@commodea.com
+else
+    git pull --rebase origin master
+fi
 curl \
     --request POST \
     --header 'content-type: application/json' \
@@ -30,21 +38,9 @@ curl \
     --output "$zipFile" \
     https://generator3.swagger.io/api/generate \
 && unzip "$zipFile" \
-&& rsync --archive --delete-after SwaggerClient-php/* "$directory/" \
-&& rsync --archive .swagger-* "$directory/" \
-&& rm -r "$zipFile" SwaggerClient-php/ .swagger-*
-pushd "$directory"
-if [[ ! -d ".git" ]]; then
-    git init \
-    && git config user.name gisevevokoru \
-    && git config user.email g+isevevokoru@commodea.com \
-    && git remote add origin "https://$user@github.com/$user/$repository.git" \
-    && git push --set-upstream origin master
-fi
-git config user.name gisevevokoru \
-&& git config user.email g+isevevokoru@commodea.com \
-&& git pull --rebase
+&& rsync --archive --delete-after SwaggerClient-php/* "./" \
+&& rm -r "$zipFile" SwaggerClient-php/
 git add -A \
 && git commit -m "Rebuild from $specUri" \
-&& git push
+&& git push --set-upstream origin master
 popd

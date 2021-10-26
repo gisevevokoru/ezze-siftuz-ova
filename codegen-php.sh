@@ -1,6 +1,7 @@
 #!/bin/bash
 specUri="$1"
-IFS=/ read scheme empty host api version remainder <<<$specUri
+IFS=/ read scheme empty host docs section version remainder <<<$specUri
+api=${section#*_}
 directory="ezze-siftuz/${api,,}-${version,,}"
 user="gisevevokoru"
 repository="ezze-siftuz-${api,,}-${version,,}"

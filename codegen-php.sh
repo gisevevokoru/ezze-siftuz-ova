@@ -43,5 +43,6 @@ curl \
 && rm -r "$zipFile" SwaggerClient-php/
 git add -A \
 && git commit -m "Rebuild from $specUri" \
+&& echo Create and paste a Personal Access Token with repo access instead of a \
 && git push --set-upstream origin master
 popd

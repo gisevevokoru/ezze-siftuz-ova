@@ -1,5 +1,5 @@
 #!/bin/bash
-specUri="$1"
+specUri=${1:?Pass a Swagger config URL, e. g. https://example.com/docs/12_Example/v7/example-interface.yml}
 IFS=/ read scheme empty host docs section version remainder <<<$specUri
 api=${section#*_}
 directory="ezze-siftuz/${api,,}-${version,,}"
